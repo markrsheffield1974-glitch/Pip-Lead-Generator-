@@ -1,2 +1,45 @@
 public/index.html
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>PIP Studios Lead Generator</title>
+<style>
+body{background:#0a0a0f;color:#eee;font-family:sans-serif;padding:2rem}
+button{padding:1rem 2rem;cursor:pointer}
+.card{background:#1a1a24;padding:1rem;margin:1rem 0;border-radius:8px}
+</style>
+</head>
+<body>
+
+<h1>PIP Studios Lead Generator</h1>
+
+<input id="q" placeholder="Optional extra terms" style="width:60%;padding:.8rem">
+<button onclick="run()">Find Leads</button>
+
+<div id="out" style="margin-top:1rem;"></div>
+
+<script>
+async function run(){
+  out.innerHTML = "Searching…";
+  const query = document.getElementById("q").value || "";
+  const r = await fetch("/api/search", {
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify({ query })
+  });
+  const d = await r.json();
+  out.innerHTML = (d.items||[]).map(l=>`
+    <div class="card">
+      <h3>${l.title || "Untitled"}</h3>
+      <p>${l.description || ""}</p>
+      <em>${l.source || ""}</em>
+      ${l.url ? `<br><a href="${l.url}" target="_blank">View source →</a>` : ""}
+    </div>
+  `).join("") || "<p>No results.</p>";
+}
+</script>
+
+</body>
+</html>
 
